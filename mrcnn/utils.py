@@ -1,12 +1,3 @@
-"""
-Mask R-CNN
-Common utility functions and classes.
-
-Copyright (c) 2017 Matterport, Inc.
-Licensed under the MIT License (see LICENSE for details)
-Written by Waleed Abdulla
-"""
-
 import sys
 import os
 import logging
@@ -23,7 +14,6 @@ import shutil
 import warnings
 from distutils.version import LooseVersion
 
-# URL from which to download the latest COCO trained weights
 COCO_MODEL_URL = "https://github.com/matterport/Mask_RCNN/releases/download/v2.0/mask_rcnn_coco.h5"
 
 

@@ -1,62 +1,25 @@
-"""
-Mask R-CNN
-Base Configurations class.
-
-Copyright (c) 2017 Matterport, Inc.
-Licensed under the MIT License (see LICENSE for details)
-Written by Waleed Abdulla
-"""
-
 import numpy as np
 
 
-# Base Configuration Class
-# Don't use this class directly. Instead, sub-class it and override
-# the configurations you need to change.
-
 class Config(object):
-    """Base configuration class. For custom configurations, create a
-    sub-class that inherits from this one and override properties
-    that need to be changed.
-    """
-    # Name the configurations. For example, 'COCO', 'Experiment 3', ...etc.
-    # Useful if your code needs to do things differently depending on which
-    # experiment is running.
     NAME = None  # Override in sub-classes
 
     # NUMBER OF GPUs to use. When using only a CPU, this needs to be set to 1.
     GPU_COUNT = 1
 
-    # Number of images to train with on each GPU. A 12GB GPU can typically
-    # handle 2 images of 1024x1024px.
-    # Adjust based on your GPU memory and image sizes. Use the highest
-    # number that your GPU can handle for best performance.
+    # Number of images to train with on each GPU.
     IMAGES_PER_GPU = 2
 
     # Number of training steps per epoch
-    # This doesn't need to match the size of the training set. Tensorboard
-    # updates are saved at the end of each epoch, so setting this to a
-    # smaller number means getting more frequent TensorBoard updates.
-    # Validation stats are also calculated at each epoch end and they
-    # might take a while, so don't set this too small to avoid spending
-    # a lot of time on validation stats.
     STEPS_PER_EPOCH = 1000
 
     # Number of validation steps to run at the end of every training epoch.
-    # A bigger number improves accuracy of validation stats, but slows
-    # down the training.
     VALIDATION_STEPS = 50
 
     # Backbone network architecture
-    # Supported values are: resnet50, resnet101.
-    # You can also provide a callable that should have the signature
-    # of model.resnet_graph. If you do so, you need to supply a callable
-    # to COMPUTE_BACKBONE_SHAPE as well
     BACKBONE = "resnet101"
 
-    # Only useful if you supply a callable to BACKBONE. Should compute
-    # the shape of each layer of the FPN Pyramid.
-    # See model.compute_backbone_shapes
+    # Only useful if you supply a callable to BACKBONE.
     COMPUTE_BACKBONE_SHAPE = None
 
     # The strides of each layer of the FPN Pyramid. These values
@@ -90,7 +53,7 @@ class Config(object):
 
     # How many anchors per image to use for RPN training
     RPN_TRAIN_ANCHORS_PER_IMAGE = 256
-    
+
     # ROIs kept after tf.nn.top_k and before non-maximum suppression
     PRE_NMS_LIMIT = 6000
 
@@ -132,18 +95,12 @@ class Config(object):
     # However, in 'square' mode, it can be overruled by IMAGE_MAX_DIM.
     IMAGE_MIN_SCALE = 0
     # Number of color channels per image. RGB = 3, grayscale = 1, RGB-D = 4
-    # Changing this requires other changes in the code. See the WIKI for more
-    # details: https://github.com/matterport/Mask_RCNN/wiki
     IMAGE_CHANNEL_COUNT = 3
 
     # Image mean (RGB)
     MEAN_PIXEL = np.array([123.7, 116.8, 103.9])
 
     # Number of ROIs per image to feed to classifier/mask heads
-    # The Mask RCNN paper uses 512 but often the RPN doesn't generate
-    # enough positive proposals to fill this and keep a positive:negative
-    # ratio of 1:3. You can increase the number of proposals by adjusting
-    # the RPN NMS threshold.
     TRAIN_ROIS_PER_IMAGE = 200
 
     # Percent of positive ROIs used to train classifier/mask heads
@@ -175,9 +132,6 @@ class Config(object):
     DETECTION_NMS_THRESHOLD = 0.3
 
     # Learning rate and momentum
-    # The Mask RCNN paper uses lr=0.02, but on TensorFlow it causes
-    # weights to explode. Likely due to differences in optimizer
-    # implementation.
     LEARNING_RATE = 0.001
     LEARNING_MOMENTUM = 0.9
 
@@ -218,10 +172,10 @@ class Config(object):
         # Input image size
         if self.IMAGE_RESIZE_MODE == "crop":
             self.IMAGE_SHAPE = np.array([self.IMAGE_MIN_DIM, self.IMAGE_MIN_DIM,
-                self.IMAGE_CHANNEL_COUNT])
+                                         self.IMAGE_CHANNEL_COUNT])
         else:
             self.IMAGE_SHAPE = np.array([self.IMAGE_MAX_DIM, self.IMAGE_MAX_DIM,
-                self.IMAGE_CHANNEL_COUNT])
+                                         self.IMAGE_CHANNEL_COUNT])
 
         # Image meta data length
         # See compose_image_meta() for details

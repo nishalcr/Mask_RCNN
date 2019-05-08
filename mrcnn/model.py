@@ -1,12 +1,3 @@
-"""
-Mask R-CNN
-The main Mask R-CNN model implementation.
-
-Copyright (c) 2017 Matterport, Inc.
-Licensed under the MIT License (see LICENSE for details)
-Written by Waleed Abdulla
-"""
-
 import os
 import random
 import datetime
@@ -88,9 +79,6 @@ def compute_backbone_shapes(config, image_shape):
 ############################################################
 #  Resnet Graph
 ############################################################
-
-# Code adopted from:
-# https://github.com/fchollet/deep-learning-models/blob/master/resnet50.py
 
 def identity_block(input_tensor, kernel_size, filters, stage, block,
                    use_bias=True, train_bn=True):
@@ -1189,9 +1177,7 @@ def load_image_gt(dataset, config, image_id, augment=False, augmentation=None,
 
     augment: (deprecated. Use augmentation instead). If true, apply random
         image augmentation. Currently, only horizontal flipping is offered.
-    augmentation: Optional. An imgaug (https://github.com/aleju/imgaug) augmentation.
-        For example, passing imgaug.augmenters.Fliplr(0.5) flips images
-        right/left 50% of the time.
+    augmentation: Optional.
     use_mini_mask: If False, returns full-size masks that are the same height
         and width as the original image. These can be big, for example
         1024x1024x100 (for 100 instances). Mini masks are smaller, typically,
@@ -1227,8 +1213,7 @@ def load_image_gt(dataset, config, image_id, augment=False, augmentation=None,
             image = np.fliplr(image)
             mask = np.fliplr(mask)
 
-    # Augmentation
-    # This requires the imgaug lib (https://github.com/aleju/imgaug)
+
     if augmentation:
         import imgaug
 
@@ -1371,11 +1356,11 @@ def build_detection_targets(rpn_rois, gt_class_ids, gt_boxes, gt_masks, config):
     # Need more?
     remaining = config.TRAIN_ROIS_PER_IMAGE - keep.shape[0]
     if remaining > 0:
-        # Looks like we don't have enough samples to maintain the desired
+        # Looks like we don't have enough notebooks to maintain the desired
         # balance. Reduce requirements and fill in the rest. This is
         # likely different from the Mask RCNN paper.
 
-        # There is a small chance we have neither fg nor bg samples.
+        # There is a small chance we have neither fg nor bg notebooks.
         if keep.shape[0] == 0:
             # Pick bg regions with easier IoU threshold
             bg_ids = np.where(rpn_roi_iou_max < 0.5)[0]
@@ -1635,12 +1620,10 @@ def data_generator(dataset, config, shuffle=True, augment=False, augmentation=No
 
     dataset: The Dataset object to pick data from
     config: The model config object
-    shuffle: If True, shuffles the samples before every epoch
+    shuffle: If True, shuffles the notebooks before every epoch
     augment: (deprecated. Use augmentation instead). If true, apply random
         image augmentation. Currently, only horizontal flipping is offered.
-    augmentation: Optional. An imgaug (https://github.com/aleju/imgaug) augmentation.
-        For example, passing imgaug.augmenters.Fliplr(0.5) flips images
-        right/left 50% of the time.
+    augmentation: Optional.
     random_rois: If > 0 then generate proposals to be used to train the
                  network classifier and mask heads. Useful if training
                  the Mask RCNN part without the RPN.
@@ -2290,13 +2273,7 @@ class MaskRCNN():
               3+: Train Resnet stage 3 and up
               4+: Train Resnet stage 4 and up
               5+: Train Resnet stage 5 and up
-        augmentation: Optional. An imgaug (https://github.com/aleju/imgaug)
-            augmentation. For example, passing imgaug.augmenters.Fliplr(0.5)
-            flips images right/left 50% of the time. You can pass complex
-            augmentations as well. This augmentation applies 50% of the
-            time, and when it does it flips images right/left half the time
-            and adds a Gaussian blur with a random sigma in range 0 to 5.
-
+        augmentation: Optional.
                 augmentation = imgaug.augmenters.Sometimes(0.5, [
                     imgaug.augmenters.Fliplr(0.5),
                     imgaug.augmenters.GaussianBlur(sigma=(0.0, 5.0))
@@ -2353,9 +2330,6 @@ class MaskRCNN():
         self.set_trainable(layers)
         self.compile(learning_rate, self.config.LEARNING_MOMENTUM)
 
-        # Work-around for Windows: Keras fails on Windows when using
-        # multiprocessing workers. See discussion here:
-        # https://github.com/matterport/Mask_RCNN/issues/13#issuecomment-353124009
         if os.name is 'nt':
             workers = 0
         else:
